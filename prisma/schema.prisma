@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////
+// 🔐 AUTH MODELS
+//////////////////////////
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  password String?
+
+  role     String  @default("PARENT") // ✅ enum → string
+  isActive Boolean @default(true)
+
+  phone   String?
+  address String?
+
+  accounts Account[]
+  sessions Session[]
+
+  applications Application[]
+  students     Student[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+//////////////////////////
+// 📝 APPLICATION
+//////////////////////////
+
+model Application {
+  id String @id @default(cuid())
+
+  studentName String
+  dob         DateTime
+  gender      String // ✅ enum → string
+
+  applyingClass  String
+  previousSchool String?
+
+  parentId String
+  parent   User   @relation(fields: [parentId], references: [id])
+
+  status  String  @default("PENDING") // ✅ enum → string
+  remarks String?
+
+  reviewedBy String?
+  reviewedAt DateTime?
+
+  documents Document[]
+  payment   Payment?
+  student   Student?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([parentId])
+  @@index([status])
+}
+
+//////////////////////////
+// 📂 DOCUMENTS
+//////////////////////////
+
+model Document {
+  id   String @id @default(cuid())
+  type String // ✅ enum → string
+  url  String
+
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  uploadedAt DateTime @default(now())
+}
+
+//////////////////////////
+// 💰 PAYMENTS
+//////////////////////////
+
+model Payment {
+  id     String @id @default(cuid())
+  amount Float
+  status String // ✅ enum → string
+
+  provider      String?
+  transactionId String?
+
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+//////////////////////////
+// 🎓 STUDENT
+//////////////////////////
+
+model Student {
+  id String @id @default(cuid())
+
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  rollNumber String  @unique
+  class      String
+  section    String?
+
+  admittedAt DateTime @default(now())
+}
