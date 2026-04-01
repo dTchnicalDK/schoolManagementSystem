@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   Menu,
   School,
@@ -44,9 +44,14 @@ type NavItem = {
   icon?: React.ElementType;
 };
 
-export function Navbar({ user }: NavbarProps) {
+// export function Navbar({ user }: NavbarProps) {
+export function Navbar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const user = session?.user;
   const role = user?.role ?? null;
+
+  //   console.log("session", session?.user);
 
   const publicLinks: NavItem[] = [
     { label: "Home", href: "/" },
@@ -119,8 +124,8 @@ export function Navbar({ user }: NavbarProps) {
             <div className="hidden md:flex">
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button
-                    variant="ghost"
+                  <div
+                    // variant="ghost"
                     className="flex items-center gap-2 px-2"
                   >
                     <Avatar className="h-8 w-8">
@@ -134,7 +139,7 @@ export function Navbar({ user }: NavbarProps) {
                         {user.role}
                       </p>
                     </div>
-                  </Button>
+                  </div>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent align="end" className="w-56">
@@ -143,9 +148,9 @@ export function Navbar({ user }: NavbarProps) {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Link href={getProfileLink(role)} className="w-full">
+                    {/* <Link href={getProfileLink(user.role)} className="w-full">
                       Go to Dashboard
-                    </Link>
+                    </Link> */}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: "/login" })}
