@@ -14,7 +14,7 @@ export default function LoginPage() {
           className="w-full border py-2 rounded hover:bg-gray-50 flex items-center justify-center gap-2"
         >
           <img
-            src="https://authjs.dev/img/providers/google.svg"
+            src="https://authjs.dev/img/providers/github.svg"
             className="w-5 h-5"
           />
           Continue with github
