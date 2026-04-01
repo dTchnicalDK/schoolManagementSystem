@@ -18,9 +18,8 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  password String?
-
-  role     String  @default("PARENT") // ✅ enum → string
+  // role: PARENT | ADMIN | REVIEWER
+  role     String  @default("PARENT")
   isActive Boolean @default(true)
 
   phone   String?
@@ -29,8 +28,8 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  applications Application[]
-  students     Student[]
+  applications      Application[] // as parent
+  reviewAssignments ReviewAssignment[] // as reviewer
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -76,86 +75,76 @@ model VerificationToken {
 // 📝 APPLICATION
 //////////////////////////
 
+// status: DRAFT | SUBMITTED | UNDER_REVIEW | ACCEPTED | REJECTED
+
 model Application {
   id String @id @default(cuid())
 
-  studentName String
-  dob         DateTime
-  gender      String // ✅ enum → string
-
+  // Student info
+  studentName    String
+  dob            DateTime
+  gender         String // "MALE" | "FEMALE" | "OTHER"
   applyingClass  String
   previousSchool String?
 
+  // Parent
   parentId String
   parent   User   @relation(fields: [parentId], references: [id])
 
-  status  String  @default("PENDING") // ✅ enum → string
-  remarks String?
+  // Status
+  status String @default("DRAFT") // "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "ACCEPTED" | "REJECTED"
 
-  reviewedBy String?
-  reviewedAt DateTime?
-
-  documents Document[]
-  payment   Payment?
-  student   Student?
+  // Relations
+  reviewAssignment ReviewAssignment?
+  auditLogs        AuditLog[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  deletedAt DateTime? // soft delete
 
   @@index([parentId])
   @@index([status])
 }
 
 //////////////////////////
-// 📂 DOCUMENTS
+// 🔍 REVIEW ASSIGNMENT
 //////////////////////////
 
-model Document {
-  id   String @id @default(cuid())
-  type String // ✅ enum → string
-  url  String
+// recommendation: ACCEPT | REJECT | PENDING
+model ReviewAssignment {
+  id String @id @default(cuid())
+
+  applicationId String      @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  reviewerId String
+  reviewer   User   @relation(fields: [reviewerId], references: [id])
+
+  remarks        String?
+  recommendation String  @default("PENDING") // "ACCEPT" | "REJECT" | "PENDING"
+
+  assignedAt DateTime  @default(now())
+  reviewedAt DateTime?
+}
+
+//////////////////////////
+// 📋 AUDIT LOG
+//////////////////////////
+
+model AuditLog {
+  id String @id @default(cuid())
 
   applicationId String
   application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  uploadedAt DateTime @default(now())
-}
-
-//////////////////////////
-// 💰 PAYMENTS
-//////////////////////////
-
-model Payment {
-  id     String @id @default(cuid())
-  amount Float
-  status String // ✅ enum → string
-
-  provider      String?
-  transactionId String?
-
-  applicationId String      @unique
-  application   Application @relation(fields: [applicationId], references: [id])
+  actorId    String // userId who performed the action
+  actorRole  String // "ADMIN" | "REVIEWER" | "PARENT"
+  action     String // e.g. "STATUS_CHANGED", "REVIEWER_ASSIGNED", "SUBMITTED"
+  fromStatus String?
+  toStatus   String?
+  note       String?
 
   createdAt DateTime @default(now())
-}
 
-//////////////////////////
-// 🎓 STUDENT
-//////////////////////////
-
-model Student {
-  id String @id @default(cuid())
-
-  applicationId String      @unique
-  application   Application @relation(fields: [applicationId], references: [id])
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  rollNumber String  @unique
-  class      String
-  section    String?
-
-  admittedAt DateTime @default(now())
+  @@index([applicationId])
 }
