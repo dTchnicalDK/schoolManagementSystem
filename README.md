@@ -23,7 +23,7 @@ bun dev
     - nextAuth
   ### Db used
     -during development sqlite
-    - on production planned to  postgraceSql
+    - on production planned to  postgresql
     - prisma Orm
 ## planned Skill to achieve
   - basic authentication integration using OAuth
