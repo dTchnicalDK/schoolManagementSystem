@@ -88,8 +88,12 @@ model Application {
   previousSchool String?
 
   // Parent
-  parentId String
-  parent   User   @relation(fields: [parentId], references: [id])
+  parentId    String
+  parentName  String
+  parentEmail String
+  parentPhone String
+  address     String
+  parent      User   @relation(fields: [parentId], references: [id])
 
   // Status
   status String @default("DRAFT") // "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "ACCEPTED" | "REJECTED"

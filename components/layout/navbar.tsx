@@ -49,7 +49,8 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const user = session?.user;
-  const role = user?.role ?? null;
+  const role: UserRole = isUserRole(user?.role) ? user.role : null;
+  console.log("role", role);
 
   //   console.log("session", session?.user);
 
@@ -148,9 +149,9 @@ export function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    {/* <Link href={getProfileLink(user.role)} className="w-full">
+                    <Link href={getProfileLink(role)} className="w-full">
                       Go to Dashboard
-                    </Link> */}
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: "/login" })}
@@ -304,8 +305,15 @@ function MobileNavLink({
   );
 }
 
-function getProfileLink(role: UserRole) {
+function getProfileLink(role: UserRole | null) {
   if (role === "ADMIN") return "/admin";
   if (role === "REVIEWER") return "/reviewer";
   return "/dashboard";
+}
+// function isUserRole(role: string | undefined) {
+//   throw new Error("Function not implemented.");
+// }
+
+function isUserRole(role: unknown): role is UserRole {
+  return role === "PARENT" || role === "ADMIN" || role === "REVIEWER";
 }

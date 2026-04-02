@@ -27,17 +27,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <SessionProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <div>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <div>
+          <SessionProvider>
             <Navbar />
             {children}
             <Footer />
-          </div>
-        </body>
-      </SessionProvider>
+          </SessionProvider>
+        </div>
+      </body>
     </html>
   );
 }
