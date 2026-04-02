@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/auth";
-// import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applicationSchema } from "@/validations/application";
 
@@ -49,16 +48,19 @@ export async function submitApplication(
     const parsed = applicationSchema.safeParse(rawData);
 
     if (!parsed.success) {
-      const fieldErrors = parsed.error.issues.reduce(
+      const fieldErrors = parsed.error.issues.reduce<Record<string, string[]>>(
         (accu, issue) => {
-          const field = issue.path[0] as string;
+          const field =
+            typeof issue.path[0] === "string" ? issue.path[0] : "form";
+
           if (!accu[field]) {
             accu[field] = [];
           }
+
           accu[field].push(issue.message);
           return accu;
         },
-        {} as Record<string, string[]>,
+        {},
       );
 
       return {
@@ -67,14 +69,6 @@ export async function submitApplication(
         errors: fieldErrors,
       };
     }
-
-    // if (!parsed.success) {
-    //   return {
-    //     success: false,
-    //     message: "Please fix the form errors.",
-    //     errors: parsed.error.flatten().fieldErrors,
-    //   };
-    // }
 
     const data = parsed.data;
 
@@ -107,6 +101,7 @@ export async function submitApplication(
       },
     });
 
+    console.log("application id ", application.id);
     return {
       success: true,
       message: "Application submitted successfully.",

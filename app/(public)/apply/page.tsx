@@ -11,6 +11,7 @@ import {
 } from "@/validations/application";
 import { Button } from "@/components/ui/button";
 import { submitApplication } from "@/actions/application/submit-application";
+import { useRouter } from "next/navigation";
 
 const steps = [
   "Student Info",
@@ -21,7 +22,7 @@ const steps = [
 
 export default function ApplyPage() {
   const [currentStep, setCurrentStep] = useState(0);
-
+  const router = useRouter();
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -90,6 +91,9 @@ export default function ApplyPage() {
       alert(result.message);
       form.reset();
       setCurrentStep(0);
+
+      router.push("/dashboard");
+      // router.push(`/dashboard/application/${result.applicationId}`);
     } else {
       alert(result.message);
       console.log(result.errors);
