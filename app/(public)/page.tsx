@@ -15,8 +15,8 @@ import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
-  // console.log(session?.user?.id); // cuid from DB
-  // console.log(session?.user?.role); // "PARENT" (default)
+  console.log(session?.user?.id); // cuid from DB
+  console.log(session?.user?.role); // "PARENT" (default)
   return (
     <div className="font-sans grid grid-rows-[4px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <div>Welcome</div>

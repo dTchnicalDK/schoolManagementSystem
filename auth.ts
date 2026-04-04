@@ -1,31 +1,47 @@
 import NextAuth from "next-auth";
+import GitHub from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  ...authConfig,
+  providers: [GitHub],
+  pages: { signIn: "/login" },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
-      // `user` is only present on first sign-in
+      console.log("🔥 JWT CALLBACK FIRED", {
+        user: user?.id,
+        sub: token.sub,
+        role: token.role,
+      });
+
       if (user?.id) {
+        token.id = user.id;
+      }
+
+      const id = (token.id ?? token.sub) as string | undefined;
+
+      if (id && !token.role) {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { id },
           select: { role: true },
         });
-        token.id = user.id;
+        token.id = id;
         token.role = dbUser?.role ?? "PARENT";
+        console.log("✅ Role fetched from DB:", token.role);
       }
+
       return token;
     },
 
     async session({ session, token }) {
-      if (token?.id) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
+      console.log("🔥 SESSION CALLBACK FIRED", {
+        tokenId: token.id,
+        tokenRole: token.role,
+      });
+      if (token.id) session.user.id = token.id as string;
+      if (token.role) session.user.role = token.role as string;
       return session;
     },
   },

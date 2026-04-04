@@ -92,8 +92,8 @@ export default function ApplyPage() {
       form.reset();
       setCurrentStep(0);
 
-      router.push("/dashboard");
-      // router.push(`/dashboard/application/${result.applicationId}`);
+      // router.push("/dashboard");
+      router.push(`/dashboard/application/${result.applicationId}`);
     } else {
       alert(result.message);
       console.log(result.errors);

@@ -63,7 +63,11 @@ export function Navbar() {
 
   const parentLinks: NavItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "My Applications", href: "/dashboard", icon: FileText },
+    {
+      label: "My Applications",
+      href: "/dashboard/applications/id", //id is to be changed into real application id
+      icon: FileText,
+    },
     { label: "Apply", href: "/apply", icon: FileText },
   ];
 

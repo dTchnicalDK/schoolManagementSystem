@@ -8,13 +8,8 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  if (session.user?.role !== "PARENT") {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
+  if (session.user?.role !== "PARENT") redirect("/login");
 
   return <main className="min-h-screen bg-background">{children}</main>;
 }
