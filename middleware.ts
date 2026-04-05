@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import { NextResponse } from "next/server";
 
-const { auth } = NextAuth(authConfig);
+const { auth } = NextAuth(authConfig); // wrapper for middleware function, works as middleware
 
 const ROLE_ROUTES: Record<string, string[]> = {
   "/dashboard": ["PARENT"],
@@ -12,12 +12,12 @@ const ROLE_ROUTES: Record<string, string[]> = {
 };
 
 export default auth((req) => {
+  //extracting needed variables for further use;
   const { pathname } = req.nextUrl;
   const session = req.auth;
   const role = session?.user?.role;
 
-  console.log("middleware role:", role);
-
+  // logics, what to do when requested path maches
   const isProtected = Object.keys(ROLE_ROUTES).some((base) =>
     pathname.startsWith(base),
   );
@@ -39,6 +39,7 @@ export default auth((req) => {
   return NextResponse.next();
 });
 
+//function to create an url based on role
 function roleHome(role?: string) {
   switch (role) {
     case "ADMIN":
@@ -50,6 +51,8 @@ function roleHome(role?: string) {
   }
 }
 
+//optional: without this above bussiness logic will run on each path
+// with this the above bussiness logic will run only on given path in mathere array
 export const config = {
   matcher: [
     "/dashboard/:path*",
