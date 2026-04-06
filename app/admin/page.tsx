@@ -114,6 +114,7 @@ async function RecentApplications() {
       <h2 className="text-sm font-semibold uppercase text-muted-foreground mb-4 tracking-wide">
         Recent Applications
       </h2>
+
       <div className="border rounded-xl divide-y">
         {recent.map((app) => (
           <Link

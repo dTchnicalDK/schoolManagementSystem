@@ -11,12 +11,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
-      console.log("🔥 JWT CALLBACK FIRED", {
-        user: user?.id,
-        sub: token.sub,
-        role: token.role,
-      });
-
       if (user?.id) {
         token.id = user.id;
       }
@@ -37,10 +31,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
 
     async session({ session, token }) {
-      console.log("🔥 SESSION CALLBACK FIRED", {
-        tokenId: token.id,
-        tokenRole: token.role,
-      });
       if (token.id) session.user.id = token.id as string;
       if (token.role) session.user.role = token.role as string;
       return session;

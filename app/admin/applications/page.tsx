@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import StatusBadge from "@/components/shared/StatusBadge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, DownloadIcon } from "lucide-react";
 
 const STATUSES = [
   "ALL",
@@ -76,6 +76,25 @@ export default async function AdminApplicationsPage({
 
       {/* Table */}
       <div className="border rounded-xl divide-y">
+        {/* download button  */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">All Applications</h1>
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              {applications.length} results
+            </p>
+            {activeStatus === "ACCEPTED" && (
+              <Link
+                href="/api/export/applications"
+                className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition"
+              >
+                <DownloadIcon />
+                Download Excel
+              </Link>
+            )}
+          </div>
+        </div>
+
         {applications.length === 0 ? (
           <p className="text-center text-muted-foreground text-sm py-16">
             No applications found.
