@@ -18,8 +18,7 @@ export default async function Home() {
   console.log(session?.user?.id); // cuid from DB
   console.log(session?.user?.role); // "PARENT" (default)
   return (
-    <div className="font-sans grid grid-rows-[4px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <div>Welcome</div>
+    <div className="font-sans ">
       <main className="min-h-screen bg-background text-foreground">
         {/* Hero Section */}
         <section className="relative overflow-hidden border-b">
@@ -202,6 +201,9 @@ export default async function Home() {
             <div className="flex items-center gap-2 font-medium text-foreground">
               <School className="h-4 w-4 text-primary" />
               <span>School Admission Portal</span>
+            </div>
+            <div>
+              <span>© copyright Dharmendra&company</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
