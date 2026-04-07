@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { ModeToggle } from "../mode-toggle";
 
 type UserRole = "PARENT" | "ADMIN" | "REVIEWER" | null;
 
@@ -63,11 +64,11 @@ export function Navbar() {
 
   const parentLinks: NavItem[] = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    {
-      label: "My Applications",
-      href: "/dashboard/applications/id", //id is to be changed into real application id
-      icon: FileText,
-    },
+    // {
+    //   label: "My Applications",
+    //   href: "/dashboard/applications/id", //id is to be changed into real application id
+    //   icon: FileText,
+    // },
     { label: "Apply", href: "/apply", icon: FileText },
   ];
 
@@ -125,13 +126,14 @@ export function Navbar() {
 
         {/* Right */}
         <div className="flex items-center gap-2">
+          <ModeToggle />
           {user ? (
             <div className="hidden md:flex">
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <div
                     // variant="ghost"
-                    className="flex items-center gap-2 px-2"
+                    className="flex items-center gap-2 px-2 cursor-pointer"
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarFallback>{initials}</AvatarFallback>

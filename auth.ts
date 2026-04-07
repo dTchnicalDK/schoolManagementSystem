@@ -24,7 +24,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
         token.id = id;
         token.role = dbUser?.role ?? "PARENT";
-        console.log("✅ Role fetched from DB:", token.role);
       }
 
       return token;

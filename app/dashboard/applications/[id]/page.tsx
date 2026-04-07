@@ -2,7 +2,13 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import StatusBadge from "@/components/shared/StatusBadge";
-import { ArrowLeft, CalendarDays, GraduationCap, User } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Download,
+  GraduationCap,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 
 export default async function ApplicationDetailPage({
@@ -46,7 +52,16 @@ export default async function ApplicationDetailPage({
             Application ID: {application.id}
           </p>
         </div>
-        <StatusBadge status={application.status} />
+        <div className="flex items-center gap-3">
+          <StatusBadge status={application.status} />
+          <Link
+            href={`/api/export/application/${application.id}`}
+            className="flex items-center gap-2 border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted transition"
+          >
+            <Download className="w-4 h-4" />
+            Download PDF
+          </Link>
+        </div>
       </div>
 
       {/* Details */}
